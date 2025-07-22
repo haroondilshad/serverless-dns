@@ -12,10 +12,10 @@ upload_source_maps = true
 
 # uncomment to enable analytics on serverless-dns
 # this binding is not inherited by other worker-envs
-#analytics_engine_datasets = [
-#    { binding = "METRICS", dataset = "SDNS_M0" },
-#    { binding = "BL_METRICS", dataset = "SDNS_BL0" }
-#]
+analytics_engine_datasets = [
+    { binding = "METRICS", dataset = "SDNS_M0" },
+    { binding = "BL_METRICS", dataset = "SDNS_BL0" }
+]
 
 [build]
 command = "npm run build"
