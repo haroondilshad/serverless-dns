@@ -26,7 +26,7 @@ globs = ["**/*.js"]
 
 [vars]
 LOG_LEVEL = "debug"
-WORKER_ENV = "development"
+WORKER_ENV = "production"
 CLOUD_PLATFORM = "cloudflare"
 
 ##################
@@ -89,3 +89,6 @@ AUTO_RENEW_BLOCKLISTS_OLDER_THAN = "42" # weeks
 # CF_API_TOKEN = ""
 # CF_LOGPUSH_R2_SECRET_KEY = ""
 # CF_LOGPUSH_R2_ACCESS_KEY = ""
+
+[observability.logs]
+enabled = true
