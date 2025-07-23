@@ -65,6 +65,7 @@ WORKER_TIMEOUT = "20000"
 CF_DNS_RESOLVER_URL = "https://1.1.1.1/dns-query"
 CF_DNS_RESOLVER_URL_2 = "https://8.8.8.8/dns-query"
 MAX_DNS_RESOLVER_URL = ""
+BG_DOWNLOAD_BLOCKLIST_WRAPPER = false
 
 # Add analytics engine datasets for production environment
 [[env.prod.analytics_engine_datasets]]
