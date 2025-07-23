@@ -52,9 +52,9 @@ on:
 
 env:
   GIT_REF: ${{ github.event.inputs.commit || github.ref }}
-  WRANGLER_VER: '3.56.0'
-  # default is 'dev' which is really empty/no env
-  WORKERS_ENV: ''
+  WRANGLER_VER: '3.114.11'
+  # Always use prod environment for consistent configuration
+  WORKERS_ENV: 'prod'
 
 jobs:
   deploy:
