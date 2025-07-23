@@ -50,6 +50,10 @@ const processLogsAsText = false;
 const ONE_WA_DATASET1 = "ONE_M0";
 const ONE_WA_DATASET2 = "ONE_BL0";
 
+// Default dataset names for different deployments
+const SDNS_WA_DATASET1 = "SDNS_M0";
+const SDNS_WA_DATASET2 = "SDNS_BL0";
+
 /**
  * Logpush limits a single log msg to upto 150 chars, and total log msgs per
  * request to 20. Logpush does not support min batch size, or min batch time
@@ -511,6 +515,34 @@ export class LogPusher {
     return u;
   }
 
+  // Determine the correct default dataset based on deployment environment
+  getDefaultDataset() {
+    // Check if we have metrics bindings available
+    const [m1, m2] = this.metricsservice();
+
+    // Try to determine dataset from environment or bindings
+    // In production environments, we typically use SDNS_M0/SDNS_BL0
+    // In "one" environment, we use ONE_M0/ONE_BL0
+    if (envutil.onCloudflare()) {
+      // For regular deployments, use SDNS datasets
+      // For "one" environment, use ONE datasets
+      const hostname =
+        typeof globalThis !== "undefined" && globalThis.location
+          ? globalThis.location.hostname
+          : "";
+
+      if (hostname.includes("one.")) {
+        return ONE_WA_DATASET1;
+      }
+
+      // Default to SDNS datasets for all other deployments
+      return SDNS_WA_DATASET1;
+    }
+
+    // Fallback to ONE datasets for backwards compatibility
+    return ONE_WA_DATASET1;
+  }
+
   // developers.cloudflare.com/analytics/analytics-engine/sql-reference
   /**
    * Return total count grouped by field
@@ -520,13 +552,13 @@ export class LogPusher {
    * @param {number} limit
    * @returns {Promise<Response>}
    */
-  async count1(lid, fields, mins = 30, dataset = ONE_WA_DATASET1, limit = 10) {
+  async count1(lid, fields, mins = 30, dataset = null, limit = 10) {
     const idx1 = this.idxmet(lid, "1");
     const f0 = fields[0];
     const col = this.cols1.get(f0);
     const vol = this.cols1.get("req");
     mins = util.bounds(mins || 30, minmins, maxmins);
-    dataset = dataset || ONE_WA_DATASET1;
+    dataset = dataset || this.getDefaultDataset();
     limit = util.bounds(limit || 10, minlimit, maxlimit);
     const sql = `
       SELECT

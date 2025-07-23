@@ -31,6 +31,10 @@ globs = ["**/*.js"]
 LOG_LEVEL = "debug"
 WORKER_ENV = "production"
 CLOUD_PLATFORM = "cloudflare"
+LOGPUSH_ENABLED = true
+WORKER_TIMEOUT = "20000"
+CF_DNS_RESOLVER_URL = "https://1.1.1.1/dns-query"
+CF_DNS_RESOLVER_URL_2 = "https://8.8.8.8/dns-query"
 ACCESS_KEYS = "serverless-dns.dillies-plateau-0o.workers.dev|6a90783574c4f454566105b4b4c55f588997e4c6bc6bcb7522e7f0723dc5f2f1"
 
 ##################
@@ -56,6 +60,18 @@ routes = [
 LOG_LEVEL = "info"
 WORKER_ENV = "production"
 CLOUD_PLATFORM = "cloudflare"
+WORKER_TIMEOUT = "20000"
+CF_DNS_RESOLVER_URL = "https://1.1.1.1/dns-query"
+CF_DNS_RESOLVER_URL_2 = "https://8.8.8.8/dns-query"
+
+# Add analytics engine datasets for production environment
+[[env.prod.analytics_engine_datasets]]
+binding = "METRICS"
+dataset = "SDNS_M0"
+
+[[env.prod.analytics_engine_datasets]]
+binding = "BL_METRICS"
+dataset = "SDNS_BL0"
 
 ##################
 #------ONE-------#

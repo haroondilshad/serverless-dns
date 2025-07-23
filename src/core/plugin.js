@@ -394,7 +394,38 @@ async function extractDnsQuestion(request) {
     // TODO: okay to assume GET request?
     const queryString = new URL(request.url).searchParams;
     const dnsQuery = queryString.get("dns");
-    return bufutil.base64ToBytes(dnsQuery);
+
+    // If we have a standard base64 DNS query, use it
+    if (!util.emptyString(dnsQuery)) {
+      return bufutil.base64ToBytes(dnsQuery);
+    }
+
+    // Otherwise, try to construct a DNS query from name/type parameters
+    const name = queryString.get("name");
+    const type = queryString.get("type");
+
+    if (!util.emptyString(name) && !util.emptyString(type)) {
+      // Create a DNS query packet from name and type parameters
+      const qid = 0; // Query ID for DoH is typically 0
+      const questions = [
+        {
+          type: type.toUpperCase(),
+          name: name,
+          class: "IN",
+        },
+      ];
+
+      try {
+        const dnsPacket = dnsutil.mkQ(qid, questions);
+        return dnsPacket;
+      } catch (e) {
+        log.w("Failed to create DNS packet from name/type parameters:", e);
+        return null;
+      }
+    }
+
+    // No valid DNS query found
+    return null;
   }
 }
 

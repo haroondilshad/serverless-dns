@@ -55,11 +55,11 @@ export class UserOp {
         );
 
         if (requiresAuth && !out.ok) {
-          res = pres.errResponse("UserOp:Auth", new Error("auth failed"));
+        res = pres.errResponse("UserOp:Auth", new Error("auth failed"));
           // Preserve auth result even in error response for analytics to access
           res.data.userAuth = out;
-        } else {
-          res = this.loadUser(ctx);
+      } else {
+        res = this.loadUser(ctx);
           // Make sure to preserve the auth result
           res.data.userAuth = out;
         }
