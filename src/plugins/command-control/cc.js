@@ -261,14 +261,8 @@ async function logs(lp, reqUrl, auth, lid) {
  * @returns {Promise<Response>}
  */
 async function analytics(lp, reqUrl, auth, lid) {
-  // TEMPORARY: Skip auth check for analytics testing
-  // if (util.emptyString(lid) || auth.no) {
-  //   return util.respond401();
-  // }
-
-  // Use a default lid if empty - use deployment-specific identifier
-  if (util.emptyString(lid)) {
-    lid = "real-analytics";
+  if (util.emptyString(lid) || auth.no) {
+    return util.respond401();
   }
 
   const p = reqUrl.searchParams;
@@ -276,11 +270,7 @@ async function analytics(lp, reqUrl, auth, lid) {
   const f = p.getAll("f");
   const d = p.get("d");
   const l = p.get("l");
-  
-  // Use the correct dataset name - default to SDNS_M0 for serverless-dns deployment
-  const dataset = d || "SDNS_M0";
-  
-  const r = await lp.count1(lid, f, t, dataset, l);
+  const r = await lp.count1(lid, f, t, d, l);
   // do not await on the response body, instead stream it out
   // blog.cloudflare.com/workers-optimization-reduces-your-bill
   return plainResponse(r.body);

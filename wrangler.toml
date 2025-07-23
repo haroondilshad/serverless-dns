@@ -31,6 +31,7 @@ globs = ["**/*.js"]
 LOG_LEVEL = "debug"
 WORKER_ENV = "production"
 CLOUD_PLATFORM = "cloudflare"
+ACCESS_KEYS = "serverless-dns.dillies-plateau-0o.workers.dev|6a90783574c4f454566105b4b4c55f588997e4c6bc6bcb7522e7f0723dc5f2f1"
 
 ##################
 #------PROD------#

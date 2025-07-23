@@ -389,7 +389,16 @@ export class LogPusher {
 
   // d is a domain name like "x.y.z.tld"
   getdomain(d) {
-    return util.tld(d);
+    try {
+      // Handle privacy-redacted logs
+      if (d === "REDACTED" || util.emptyString(d)) {
+        return "unknown";
+      }
+      return util.tld(d);
+    } catch (e) {
+      this.corelog.w(`getdomain: invalid domain '${d}':`, e.message);
+      return "unknown";
+    }
   }
 
   // flag is of the form f:1:2AOAERQAkAQKAggAAEA

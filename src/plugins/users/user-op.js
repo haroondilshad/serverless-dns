@@ -35,12 +35,28 @@ export class UserOp {
 
     try {
       const out = await token.auth(ctx.rxid, ctx.request.url);
-      if (!out.ok) {
-        res = pres.errResponse("UserOp:Auth", new Error("auth failed"));
-      } else {
-        res = this.loadUser(ctx);
-      }
+
+      // Always store auth result first - this is needed by analytics and other endpoints
       res.data.userAuth = out;
+
+      // For DNS queries, always proceed regardless of auth status
+      // Auth is only enforced at the analytics endpoint level
+      if (ctx.isDnsMsg) {
+        res = this.loadUser(ctx);
+        // Make sure to preserve the auth result even when loadUser creates a new response
+        res.data.userAuth = out;
+      } else {
+        // For non-DNS requests (like analytics), maintain current auth behavior
+        if (!out.ok) {
+          res = pres.errResponse("UserOp:Auth", new Error("auth failed"));
+          // Preserve auth result even in error response for analytics to access
+          res.data.userAuth = out;
+        } else {
+          res = this.loadUser(ctx);
+          // Make sure to preserve the auth result
+          res.data.userAuth = out;
+        }
+      }
     } catch (ex) {
       res = pres.errResponse("UserOp", ex);
     }
