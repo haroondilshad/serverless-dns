@@ -34,6 +34,13 @@
 - **Key Code Issue**: Missing logic to convert name/type parameters to DNS packet format
 - **Impact**: Standard DoH GET queries completely non-functional, users couldn't use common DNS query format
 
+### 7. **🔧 DEPLOYMENT: Bun Build Environment Dependency Resolution**
+- **Problem**: Cloudflare Workers build failing with bun when resolving GitHub dependencies
+- **Root Cause**: Bun build environment couldn't resolve `github:` dependency format for `@serverless-dns/lfu-cache#v3.5.2`
+- **Evidence**: `error: @serverless-dns/lfu-cache@github:serverless-dns/lfu-cache#v3.5.2 failed to resolve`
+- **Key Code Issue**: Package.json using `github:` format which bun interprets differently than npm
+- **Impact**: Build failures preventing deployment of fixes
+
 ## 🔧 **Fixes Applied**
 
 ### **Configuration Fixes**
@@ -225,6 +232,29 @@ async function extractDnsQuestion(request) {
 }
 ```
 **Key Innovation**: Automatic conversion of human-readable name/type parameters to proper DNS packet format.
+
+#### 6. **🔧 DEPLOYMENT FIX: Bun-Compatible Dependencies (`package.json`)**
+**Problem**: Cloudflare Workers build failing with bun dependency resolution
+```json
+// BEFORE - github: format causing bun build failures
+{
+  "dependencies": {
+    "@serverless-dns/dns-parser": "github:serverless-dns/dns-parser#v2.1.2",
+    "@serverless-dns/lfu-cache": "github:serverless-dns/lfu-cache#v3.5.2", 
+    "@serverless-dns/trie": "github:serverless-dns/trie#v0.0.17"
+  }
+}
+
+// AFTER - HTTPS URLs compatible with bun build environment
+{
+  "dependencies": {
+    "@serverless-dns/dns-parser": "https://github.com/serverless-dns/dns-parser.git#v2.1.2",
+    "@serverless-dns/lfu-cache": "https://github.com/serverless-dns/lfu-cache.git#v3.5.2",
+    "@serverless-dns/trie": "https://github.com/serverless-dns/trie.git#v0.0.17"
+  }
+}
+```
+**Key Innovation**: Use explicit HTTPS Git URLs for consistent dependency resolution across npm and bun.
 
 ## 🔐 **Security Implementation**
 
