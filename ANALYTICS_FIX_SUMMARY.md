@@ -106,8 +106,9 @@ const dataset = d || "SDNS_M0";
 ## 📊 **Final Configuration**
 
 ### Working Endpoints
-- **DNS**: `https://serverless-dns.dillies-plateau-0o.workers.dev/dns-query`
-- **Analytics**: `https://serverless-dns.dillies-plateau-0o.workers.dev/1:AAIQAA==:79fa0aeed61f74d225885cf0c5b18aaf9dfa21ffed38c8b0/analytics?t=60&f=qname`
+- **DNS**: `https://serverless-dns.dillies-plateau-0o.workers.dev/dns-query` (No auth required)
+- **Main Page**: `https://serverless-dns.dillies-plateau-0o.workers.dev/` (No auth required - redirects to config)
+- **Analytics**: `https://serverless-dns.dillies-plateau-0o.workers.dev/1:AAIQAA==:79fa0aeed61f74d225885cf0c5b18aaf9dfa21ffed38c8b0/analytics?t=60&f=qname` (Auth required)
 
 ### Analytics Engine Bindings
 ```toml

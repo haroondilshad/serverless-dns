@@ -40,14 +40,21 @@ export class UserOp {
       res.data.userAuth = out;
 
       // For DNS queries, always proceed regardless of auth status
-      // Auth is only enforced at the analytics endpoint level
       if (ctx.isDnsMsg) {
         res = this.loadUser(ctx);
         // Make sure to preserve the auth result even when loadUser creates a new response
         res.data.userAuth = out;
       } else {
-        // For non-DNS requests (like analytics), maintain current auth behavior
-        if (!out.ok) {
+        // For non-DNS requests, check if this is an endpoint that requires authentication
+        const url = new URL(ctx.request.url);
+        const pathSegments = url.pathname
+          .split("/")
+          .filter((s) => s.length > 0);
+        const requiresAuth = pathSegments.some(
+          (segment) => segment === "analytics" || segment === "logs"
+        );
+
+        if (requiresAuth && !out.ok) {
           res = pres.errResponse("UserOp:Auth", new Error("auth failed"));
           // Preserve auth result even in error response for analytics to access
           res.data.userAuth = out;
