@@ -76,6 +76,10 @@ dataset = "SDNS_M0"
 binding = "BL_METRICS"
 dataset = "SDNS_BL0"
 
+# Ensure logs remain enabled for production deployments
+[env.prod.observability.logs]
+enabled = true
+
 ##################
 #------ONE-------#
 ##################
